@@ -3,12 +3,16 @@
 (defprotocol Functor
   (-fmap [self f]))
 
-(defprotocol Monad
-  (-flat-map [self f]))
-
 (defn fmap [f fv] (-fmap fv f))
 
-(defn flat-map [f mv] (-flat-map mv f))
+(defprotocol Applicative
+  (fapply [self fv]))
 
-(def bind -flat-map)
+(defprotocol Monad
+  (bind [self f]))
+
+(defn flat-map [f mv] (bind mv f))
+
+(defprotocol Alternative
+  (alt [self other]))
 
