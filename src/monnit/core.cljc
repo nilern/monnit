@@ -13,6 +13,8 @@
 
 (defn flat-map [f mv] (bind mv f))
 
+(defmulti pure (fn [type _] type))
+
 (defprotocol Alternative
   (alt [self other]))
 

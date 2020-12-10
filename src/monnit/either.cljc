@@ -44,3 +44,5 @@
 
 (def pure ->Right)
 
+(defmethod m/pure Either [_ v] (pure v))
+
