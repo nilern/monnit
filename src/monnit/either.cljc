@@ -1,5 +1,6 @@
 (ns monnit.either
-  (:require [monnit.core :as m]))
+  (:require [monnit.core :as m]
+            [monnit.util :refer [typecase]]))
 
 (defprotocol Either
   (either? [self]))
@@ -13,10 +14,11 @@
   (either? [_] true)
 
   m/Functor
-  (-fmap [self f] self)
-
-  m/Applicative
-  (fapply [self _] self)
+  (-fmap [self _] self)
+  (-fmap [self _ _] self)
+  (-fmap [self _ _ _] self)
+  (-fmap [self _ _ _ _] self)
+  (-fmap [self _ _ _ _ _] self)
 
   m/Monad
   (bind [self _] self)
@@ -30,11 +32,39 @@
 
   m/Functor
   (-fmap [_ f] (Right. (f value)))
-
-  m/Applicative
-  (fapply [_ fv]
-    (assert (either? fv))
-    (m/-fmap fv value))
+  (-fmap [_ f b]
+    (typecase [b b]
+      Right (Right. (f value (.-value b)))
+      Left b))
+  (-fmap [_ f b c]
+    (typecase [b b]
+      Right (typecase [c c]
+              Right (Right. (f value (.-value b) (.-value c)))
+              Left c)
+      Left b))
+  (-fmap [_ f b c d]
+    (typecase [b b]
+      Right (typecase [c c]
+              Right (typecase [d d]
+                      Right (Right. (f value (.-value b) (.-value c) (.-value d)))
+                      Left d)
+              Left c)
+      Left b))
+  (-fmap [_ f b c d args]
+    (typecase [b b]
+      Right (typecase [c c]
+              Right (typecase [d d]
+                      Right (let [args (reduce (fn [args arg]
+                                                 (typecase [arg arg]
+                                                   Right (conj! args (.-value arg))
+                                                   Left (reduced arg)))
+                                               (transient []) args)]
+                              (if (instance? Left args)
+                                args
+                                (apply f value (.-value b) (.-value c) (.-value d) (persistent! args))))
+                      Left d)
+              Left c)
+      Left b))
 
   m/Monad
   (bind [_ f] (f value))
