@@ -30,3 +30,37 @@
 (defprotocol Alternative
   (alt [self other]))
 
+(extend-type #?(:clj clojure.lang.APersistentVector, :cljs PersistentVector)
+  Semigroup
+  (-sconcat [a b] (persistent! (reduce conj! (transient a) b)))
+  (-sconcat [a b c]
+    (let [acc (transient a)
+          acc (reduce conj! acc b)
+          acc (reduce conj! acc c)]
+      (persistent! acc)))
+  (-sconcat [a b c d]
+    (let [acc (transient a)
+          acc (reduce conj! acc b)
+          acc (reduce conj! acc c)
+          acc (reduce conj! acc d)]
+      (persistent! acc)))
+  (-sconcat [a b c d args]
+    (let [acc (transient a)
+          acc (reduce conj! acc b)
+          acc (reduce conj! acc c)
+          acc (reduce conj! acc d)
+          acc (reduce (fn [acc arg] (reduce conj! acc arg)) acc args)]
+      (persistent! acc)))
+
+  Functor
+  (-fmap [self f] (mapv f self))
+  (-fmap [self f b] (mapv f self b))
+  (-fmap [self f b c] (mapv f self b c))
+  (-fmap [self f b c d] (mapv f self b c d))
+  (-fmap [self f b c d args] (apply mapv f self b c d args))
+
+  Monad
+  (bind [self f] (into [] (mapcat f) self)))
+
+(defmethod pure #?(:clj clojure.lang.APersistentVector, :cljs PersistentVector) [_ v] [v])
+
