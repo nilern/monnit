@@ -1,5 +1,15 @@
 (ns monnit.core)
 
+(defprotocol Semigroup
+  (-sconcat [self b] [self b c] [self b c d] [self b c d args]))
+
+(defn sconcat
+  ([a] a)
+  ([a b] (-sconcat a b))
+  ([a b c] (-sconcat a b c))
+  ([a b c d] (-sconcat a b c d))
+  ([a b c d & args] (-sconcat a b c d args)))
+
 (defprotocol Functor
   (-fmap [a f] [a f b] [a f b c] [a f b c d] [a f b c d args]))
 
