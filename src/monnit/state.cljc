@@ -2,9 +2,9 @@
   (:refer-clojure :exclude [get set update])
   #?(:cljs (:require-macros [monnit.state-macros :refer [defstatetype]]))
   (:require [monnit.core :as m]
-            #?(:clj [monnit.state-macros :refer [defstatetype]])))
-
-;;; OPTIMIZE: PersistentVector is a bulky pair
+            #?(:clj [monnit.state-macros :refer [defstatetype]])
+            [monnit.pair #?@(:cljs [:refer [Pair]])])
+  #?(:clj (:import [monnit.pair Pair])))
 
 (defprotocol State
   (state? [self])
@@ -21,59 +21,63 @@
   State
   (state? [_] true)
   (-run-state [_ s]
-    (let [[s a] (-run-state fa s)]
-      [s (f a)])))
+    (let [^Pair sa (-run-state fa s)]
+      (Pair. (.-left sa) (f (.-right sa))))))
 
 (defstatetype FMap2 [f fa fb]
   State
   (state? [_] true)
   (-run-state [_ s]
-    (let [[s a] (-run-state fa s)
-          [s b] (-run-state fb s)]
-      [s (f a b)])))
+    (let [^Pair sa (-run-state fa s)
+          ^Pair sb (-run-state fb (.-left sa))]
+      (Pair. (.-left sb) (f (.-right sa) (.-right sb))))))
 
 (defstatetype FMap3 [f fa fb fc]
   State
   (state? [_] true)
   (-run-state [_ s]
-    (let [[s a] (-run-state fa s)
-          [s b] (-run-state fb s)
-          [s c] (-run-state fc s)]
-      [s (f a b c)])))
+    (let [^Pair sa (-run-state fa s)
+          ^Pair sb (-run-state fb (.-left sa))
+          ^Pair sc (-run-state fc (.-left sb))]
+      (Pair. (.-left sc) (f (.-right sa) (.-right sb) (.-right sc))))))
 
 (defstatetype FMap4 [f fa fb fc fd]
   State
   (state? [_] true)
   (-run-state [_ s]
-    (let [[s a] (-run-state fa s)
-          [s b] (-run-state fb s)
-          [s c] (-run-state fc s)
-          [s d] (-run-state fd s)]
-      [s (f a b c d)])))
+    (let [^Pair sa (-run-state fa s)
+          ^Pair sb (-run-state fb (.-left sa))
+          ^Pair sc (-run-state fc (.-left sb))
+          ^Pair sd (-run-state fd (.-left sc))]
+      (Pair. (.-left sc) (f (.-right sa) (.-right sb) (.-right sc) (.-right sd))))))
 
 (defstatetype FMapN [f fa fb fc fd fargs]
   State
   (state? [_] true)
   (-run-state [_ s]
-    (let [[s a] (-run-state fa s)
-          [s b] (-run-state fb s)
-          [s c] (-run-state fc s)
-          [s d] (-run-state fd s)
-          s (volatile! s)
-          args (mapv (fn [arg] (vreset! (-run-state arg @s))) fargs)]
-      [s (apply f a b c d args)])))
+    (let [^Pair sa (-run-state fa s)
+          ^Pair sb (-run-state fb (.-left sa))
+          ^Pair sc (-run-state fc (.-left sb))
+          ^Pair sd (-run-state fd (.-left sc))
+          s (volatile! (.-left sd))
+          args (mapv (fn [arg]
+                       (let [^Pair sarg (-run-state arg @s)]
+                         (vreset! s (.-left sarg))
+                         (.-right sarg)))
+                     fargs)]
+      (Pair. @s (apply f (.-right sa) (.-right sb) (.-right sc) (.-right sd) args)))))
 
 (defstatetype Bind [mv f]
   State
   (state? [_] true)
   (-run-state [self s]
-    (let [[s a] (-run-state mv s)]
-      (-run-state (f a) s))))
+    (let [^Pair sa (-run-state mv s)]
+      (-run-state (f (.-right sa)) (.-left sa)))))
 
 (deftype Pure [v]
   State
   (state? [_] true)
-  (-run-state [_ s] [s v])
+  (-run-state [_ s] (Pair. s v))
 
   m/Functor
   (-fmap [_ f] (Pure. (f v)))
@@ -92,21 +96,21 @@
 (defstatetype Get []
   State
   (state? [_] true)
-  (-run-state [_ s] [s s]))
+  (-run-state [_ s] (Pair. s s)))
 
 (def get (->Get))
 
 (defstatetype Set [s]
   State
   (state? [_] true)
-  (-run-state [_ _] [s nil]))
+  (-run-state [_ _] (Pair. s nil)))
 
 (def set ->Set)
 
 (defstatetype Update [f]
   State
   (state? [_] true)
-  (-run-state [_ s] (let [s (f s)] [s s])))
+  (-run-state [_ s] (let [s (f s)] (Pair. s s))))
 
 (def update ->Update)
 
