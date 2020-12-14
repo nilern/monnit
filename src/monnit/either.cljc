@@ -7,6 +7,9 @@
 
 (extend-protocol Either
   #?(:clj Object, :cljs default)
+  (either? [_] false)
+
+  nil
   (either? [_] false))
 
 (defrecord Left [value]

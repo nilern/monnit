@@ -8,7 +8,12 @@
 (extend-protocol Identity
   #?(:clj Object, :cljs default)
   (identity? [_] false)
-  (run-identity [_] (assert false))) ; FIXME: error message
+  (run-identity [self]
+    (assert false (str "run-identity called on non-Identity value " self)))
+
+  nil
+  (identity? [_] false)
+  (run-identity [self] (assert false "run-identity called on nil")))
 
 (deftype Pure [v]
   Identity

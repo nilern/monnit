@@ -13,7 +13,12 @@
 (extend-protocol State
   #?(:clj Object, :cljs default)
   (state? [_] false)
-  (-run-state [_ _] (assert false))) ; FIXME: error message
+  (-run-state [self _]
+    (assert false (str "-run-state called on non-State value " self)))
+
+  nil
+  (state? [_] false)
+  (-run-state [self _] (assert false "-run-state called on nil")))
 
 (declare ->FMap1 ->FMap2 ->FMap3 ->FMap4 ->FMapN ->Bind)
 

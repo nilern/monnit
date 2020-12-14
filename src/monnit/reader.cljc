@@ -11,7 +11,12 @@
 (extend-protocol Reader
   #?(:clj Object, :cljs default)
   (reader? [_] false)
-  (-run-reader [_ _] (assert false))) ; FIXME: error message
+  (-run-reader [self _]
+    (assert false (str "-run-reader called on non-Reader value " self)))
+
+  nil
+  (reader? [_] false)
+  (-run-reader [self _] (assert false "-run-reader called on nil")))
 
 (declare ->FMap1 ->FMap2 ->FMap3 ->FMap4 ->FMapN ->Bind)
 
