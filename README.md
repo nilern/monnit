@@ -1,5 +1,7 @@
 # Monnit
 
+[![Build Status](https://img.shields.io/github/workflow/status/nilern/monnit/Run%20tests.svg)](https://github.com/nilern/monnit/actions)
+
 Monads, functors etc. for Clojure.
 
 ## Market Differentiation
