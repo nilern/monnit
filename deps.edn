@@ -2,5 +2,6 @@
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}}
  
  :aliases {:test {:extra-paths ["test"]
-                  :extra-deps {lambdaisland/kaocha {:mvn/version "1.0.732"}}}}}
+                  :extra-deps {lambdaisland/kaocha {:mvn/version "1.0.732"}
+                               lambdaisland/kaocha-cljs {:mvn/version "0.0-71"}}}}}
 
