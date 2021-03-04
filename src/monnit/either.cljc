@@ -3,18 +3,30 @@
             [monnit.impl.util :refer [typecase]]))
 
 (defprotocol Either
-  (either? [self]))
+  (either? [self])
+  (left? [self])
+  (right? [self])
+  (-fold [self lf rf]))
 
 (extend-protocol Either
   #?(:clj Object, :cljs default)
   (either? [_] false)
+  (left? [_] false)
+  (right? [_] false)
+  (-fold [self _ _] (assert false (str "fold called on non-Either value " self)))
 
   nil
-  (either? [_] false))
+  (either? [_] false)
+  (left? [_] false)
+  (right? [_] false)
+  (-fold [self _ _] (assert false (str "fold called on non-Either value " self))))
 
 (defrecord Left [value]
   Either
   (either? [_] true)
+  (left? [_] true)
+  (right? [_] false)
+  (-fold [_ lf _] (lf value))
 
   m/Functor
   (-fmap [self _] self)
@@ -29,9 +41,14 @@
   m/Alternative
   (alt [_ other] other))
 
+(def left ->Left)
+
 (defrecord Right [value]
   Either
   (either? [_] true)
+  (left? [_] false)
+  (right? [_] true)
+  (-fold [_ _ rf] (rf value))
 
   m/Functor
   (-fmap [_ f] (Right. (f value)))
@@ -64,7 +81,7 @@
                                                (transient []) args)]
                               (if (instance? Left args)
                                 args
-                                (apply f value (.-value b) (.-value c) (.-value d) (persistent! args))))
+                                (Right. (apply f value (.-value b) (.-value c) (.-value d) (persistent! args)))))
                       Left d)
               Left c)
       Left b))
@@ -75,7 +92,11 @@
   m/Alternative
   (alt [self _] self))
 
-(def pure ->Right)
+(def right ->Right)
+
+(def pure right)
 
 (defmethod m/pure Either [_ v] (pure v))
+
+(defn fold [lf rf e] (-fold e lf rf))
 
