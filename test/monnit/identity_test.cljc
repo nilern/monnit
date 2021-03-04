@@ -10,7 +10,9 @@
 
     (doseq [n (range 1 10)]
       (testing (str "fmap " n)
-        (is (= (* n 5) (id/run (apply m/fmap + (map id/pure (repeat n 5))))))))
+        (let [mv (apply m/fmap + (map id/pure (repeat n 5)))]
+          (is (= true (id/identity? mv)))
+          (is (= (* n 5) (id/run mv))))))
 
     (is (= 6 (id/run (m/bind (id/pure 5) (comp id/pure inc)))))))
 

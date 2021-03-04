@@ -55,6 +55,11 @@
     (apply f (-run-reader a ctx) (-run-reader b ctx) (-run-reader c ctx) (-run-reader d ctx)
            (map #(-run-reader % ctx) args))))
 
+(defreadertype Bind [a f]
+  Reader
+  (reader? [_] true)
+  (-run-reader [_ ctx] (-run-reader (f (-run-reader a ctx)) ctx)))
+
 (deftype Pure [v]
   Reader
   (reader? [_] true)
@@ -62,10 +67,10 @@
 
   m/Functor
   (-fmap [_ f] (Pure. (f v)))
-  (-fmap [self f b] (->FMap2 self f b))
-  (-fmap [self f b c] (->FMap3 self f b c))
-  (-fmap [self f b c d] (->FMap4 self f b c d))
-  (-fmap [self f b c d args] (->FMapN self f b c d args))
+  (-fmap [self f b] (FMap2. f self b))
+  (-fmap [self f b c] (FMap3. f self b c))
+  (-fmap [self f b c d] (FMap4. f self b c d))
+  (-fmap [self f b c d args] (FMapN. f self b c d args))
 
   m/Monad
   (bind [_ f] (f v)))
