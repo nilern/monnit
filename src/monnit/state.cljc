@@ -86,10 +86,10 @@
 
   m/Functor
   (-fmap [_ f] (Pure. (f v)))
-  (-fmap [self f b] (->FMap2 f self b))
-  (-fmap [self f b c] (->FMap3 f self b c))
-  (-fmap [self f b c d] (->FMap4 f self b c d))
-  (-fmap [self f b c d args] (->FMapN f self b c d args))
+  (-fmap [self f b] (FMap2. f self b))
+  (-fmap [self f b c] (FMap3. f self b c))
+  (-fmap [self f b c d] (FMap4. f self b c d))
+  (-fmap [self f b c d args] (FMapN. f self b c d args))
 
   m/Monad
   (bind [_ f] (f v)))
