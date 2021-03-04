@@ -1,6 +1,6 @@
 (ns monnit.either
   (:require [monnit.core :as m]
-            [monnit.util :refer [typecase]]))
+            [monnit.impl.util :refer [typecase]]))
 
 (defprotocol Either
   (either? [self]))

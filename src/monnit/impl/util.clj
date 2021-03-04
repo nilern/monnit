@@ -1,4 +1,4 @@
-(ns monnit.util)
+(ns monnit.impl.util)
 
 (defmacro typecase [[x expr] & clauses]
   (let [v (gensym)]
