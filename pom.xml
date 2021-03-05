@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <packaging>jar</packaging>
+
   <groupId>com.deepbeginnings</groupId>
   <artifactId>monnit</artifactId>
-  <version>0.1.0-alpha1</version>
+  <version>0.1.0-alpha2</version>
   <name>monnit</name>
+  
+  <scm>
+    <url>https://github.com/nilern/monnit</url>
+    <connection>scm:git:git://github.com/nilern/monnit.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/nilern/monnit.git</developerConnection>
+    <tag>0.1.0-alpha2</tag>
+  </scm>
+
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -13,9 +23,11 @@
       <version>1.10.1</version>
     </dependency>
   </dependencies>
+
   <build>
     <sourceDirectory>src</sourceDirectory>
   </build>
+
   <repositories>
     <repository>
       <id>clojars</id>
