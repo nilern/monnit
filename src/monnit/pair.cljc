@@ -3,21 +3,29 @@
 
 (declare ->Pair)
 
-(defrecord Pair [left right]
+(defrecord Pair [fst snd]
   m/Functor
-  (-fmap [_ f] (->Pair left (f right)))
+  (-fmap [_ f] (->Pair fst (f snd)))
   (-fmap [_ f b]
-    (->Pair (m/sconcat left (.-left ^Pair b))
-            (f right (.-right ^Pair b))))
+    (->Pair (m/sconcat fst (.-fst ^Pair b))
+            (f snd (.-snd ^Pair b))))
   (-fmap [_ f b c]
-    (->Pair (m/sconcat left (.-left ^Pair b) (.-left ^Pair c))
-            (f right (.-right ^Pair b) (.-right ^Pair c))))
+    (->Pair (m/sconcat fst (.-fst ^Pair b) (.-fst ^Pair c))
+            (f snd (.-snd ^Pair b) (.-snd ^Pair c))))
   (-fmap [_ f b c d]
-    (->Pair (m/sconcat left (.-left ^Pair b) (.-left ^Pair c) (.-left ^Pair d))
-            (f right (.-right ^Pair b) (.-right ^Pair c) (.-right ^Pair d))))
+    (->Pair (m/sconcat fst (.-fst ^Pair b) (.-fst ^Pair c) (.-fst ^Pair d))
+            (f snd (.-snd ^Pair b) (.-snd ^Pair c) (.-snd ^Pair d))))
   (-fmap [_ f b c d args]
-    (->Pair (apply m/sconcat left (.-left ^Pair b) (.-left ^Pair c) (.-left ^Pair d)
-                   (map (fn [^Pair arg] (.-left arg)) args))
-            (apply f right (.-right ^Pair b) (.-right ^Pair c) (.-left ^Pair d)
-                   (map (fn [^Pair arg] (.-right arg)) args)))))
+    (->Pair (apply m/sconcat fst (.-fst ^Pair b) (.-fst ^Pair c) (.-fst ^Pair d)
+                   (map (fn [^Pair arg] (.-fst arg)) args))
+            (apply f snd (.-snd ^Pair b) (.-snd ^Pair c) (.-snd ^Pair d)
+                   (map (fn [^Pair arg] (.-snd arg)) args)))))
+
+(def pair ->Pair)
+
+(defn pair? [p] (instance? Pair p))
+
+(defn fst [^Pair p] (.-fst p))
+
+(defn snd [^Pair p] (.-snd p))
 

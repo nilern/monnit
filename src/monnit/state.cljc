@@ -27,57 +27,57 @@
   (state? [_] true)
   (-run-state [_ s]
     (let [^Pair sa (-run-state fa s)]
-      (Pair. (.-left sa) (f (.-right sa))))))
+      (Pair. (.-fst sa) (f (.-snd sa))))))
 
 (defstatetype FMap2 [f fa fb]
   State
   (state? [_] true)
   (-run-state [_ s]
     (let [^Pair sa (-run-state fa s)
-          ^Pair sb (-run-state fb (.-left sa))]
-      (Pair. (.-left sb) (f (.-right sa) (.-right sb))))))
+          ^Pair sb (-run-state fb (.-fst sa))]
+      (Pair. (.-fst sb) (f (.-snd sa) (.-snd sb))))))
 
 (defstatetype FMap3 [f fa fb fc]
   State
   (state? [_] true)
   (-run-state [_ s]
     (let [^Pair sa (-run-state fa s)
-          ^Pair sb (-run-state fb (.-left sa))
-          ^Pair sc (-run-state fc (.-left sb))]
-      (Pair. (.-left sc) (f (.-right sa) (.-right sb) (.-right sc))))))
+          ^Pair sb (-run-state fb (.-fst sa))
+          ^Pair sc (-run-state fc (.-fst sb))]
+      (Pair. (.-fst sc) (f (.-snd sa) (.-snd sb) (.-snd sc))))))
 
 (defstatetype FMap4 [f fa fb fc fd]
   State
   (state? [_] true)
   (-run-state [_ s]
     (let [^Pair sa (-run-state fa s)
-          ^Pair sb (-run-state fb (.-left sa))
-          ^Pair sc (-run-state fc (.-left sb))
-          ^Pair sd (-run-state fd (.-left sc))]
-      (Pair. (.-left sc) (f (.-right sa) (.-right sb) (.-right sc) (.-right sd))))))
+          ^Pair sb (-run-state fb (.-fst sa))
+          ^Pair sc (-run-state fc (.-fst sb))
+          ^Pair sd (-run-state fd (.-fst sc))]
+      (Pair. (.-fst sc) (f (.-snd sa) (.-snd sb) (.-snd sc) (.-snd sd))))))
 
 (defstatetype FMapN [f fa fb fc fd fargs]
   State
   (state? [_] true)
   (-run-state [_ s]
     (let [^Pair sa (-run-state fa s)
-          ^Pair sb (-run-state fb (.-left sa))
-          ^Pair sc (-run-state fc (.-left sb))
-          ^Pair sd (-run-state fd (.-left sc))
-          s (volatile! (.-left sd))
+          ^Pair sb (-run-state fb (.-fst sa))
+          ^Pair sc (-run-state fc (.-fst sb))
+          ^Pair sd (-run-state fd (.-fst sc))
+          s (volatile! (.-fst sd))
           args (mapv (fn [arg]
                        (let [^Pair sarg (-run-state arg @s)]
-                         (vreset! s (.-left sarg))
-                         (.-right sarg)))
+                         (vreset! s (.-fst sarg))
+                         (.-snd sarg)))
                      fargs)]
-      (Pair. @s (apply f (.-right sa) (.-right sb) (.-right sc) (.-right sd) args)))))
+      (Pair. @s (apply f (.-snd sa) (.-snd sb) (.-snd sc) (.-snd sd) args)))))
 
 (defstatetype Bind [mv f]
   State
   (state? [_] true)
   (-run-state [self s]
     (let [^Pair sa (-run-state mv s)]
-      (-run-state (f (.-right sa)) (.-left sa)))))
+      (-run-state (f (.-snd sa)) (.-fst sa)))))
 
 (deftype Pure [v]
   State
