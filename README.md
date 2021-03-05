@@ -1,5 +1,6 @@
 # Monnit
 
+[![Clojars Project](https://img.shields.io/clojars/v/com.deepbeginnings/monnit.svg)](https://clojars.org/com.deepbeginnings/monnit)
 [![Build Status](https://img.shields.io/github/workflow/status/nilern/monnit/Run%20tests.svg)](https://github.com/nilern/monnit/actions)
 
 Monads, functors etc. for Clojure.
