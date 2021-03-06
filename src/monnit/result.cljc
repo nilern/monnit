@@ -108,6 +108,18 @@
 
 (defmethod m/pure Result [_ v] (pure v))
 
+(defn try->result
+  "Call `thunk` with no arguments. If it throws an Exception (clj) or Error (cljs),
+  catch that and wrap it with [[err]]. Otherwise wrap the result with [[ok]].
+
+  Calls `thunk` immediately instead of waiting for [[run]].
+
+  Does not catch non-Exception/Error throwables."
+  [thunk]
+  (try
+    (Ok. (thunk))
+    (catch #?(:clj Exception, :cljs js/Error) exn (Err. exn))))
+
 (defn run
   "If `res` contains an error, call `on-error` with the error. If `res` is successful,
   call `on-success` with the contained value."

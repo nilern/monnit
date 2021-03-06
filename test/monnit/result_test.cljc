@@ -74,3 +74,16 @@
       (is (= true (r/ok? mv)))
       (is (= 6 (r/run unreachable inc mv))))))
 
+(deftest test-try
+  (let [mv (r/try->result (fn [] 5))]
+    (is (= true (r/result? mv)))
+    (is (= false (r/err? mv)))
+    (is (= true (r/ok? mv)))
+    (is (= 6 (r/run unreachable inc mv))))
+
+  (let [mv (r/try->result (fn [] (throw (ex-info "oh noes" {}))))]
+    (is (= true (r/result? mv)))
+    (is (= true (r/err? mv)))
+    (is (= false (r/ok? mv)))
+    (is (= {} (r/run ex-data unreachable mv)))))
+
