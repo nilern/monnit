@@ -1,4 +1,4 @@
-(ns monnit.reader-macros
+(ns monnit.impl.reader-macros
   (:require [monnit.core :as m]))
 
 (defmacro defreadertype [name fields & impls]

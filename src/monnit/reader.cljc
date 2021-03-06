@@ -1,8 +1,8 @@
 (ns monnit.reader
   (:refer-clojure :exclude [get])
-  #?(:cljs (:require-macros [monnit.reader-macros :refer [defreadertype]]))
+  #?(:cljs (:require-macros [monnit.impl.reader-macros :refer [defreadertype]]))
   (:require [monnit.core :as m]
-            #?(:clj [monnit.reader-macros :refer [defreadertype]])))
+            #?(:clj [monnit.impl.reader-macros :refer [defreadertype]])))
 
 (defprotocol Reader
   (reader? [self])

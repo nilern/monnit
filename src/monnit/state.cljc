@@ -1,8 +1,8 @@
 (ns monnit.state
   (:refer-clojure :exclude [get set update])
-  #?(:cljs (:require-macros [monnit.state-macros :refer [defstatetype]]))
+  #?(:cljs (:require-macros [monnit.impl.state-macros :refer [defstatetype]]))
   (:require [monnit.core :as m]
-            #?(:clj [monnit.state-macros :refer [defstatetype]])
+            #?(:clj [monnit.impl.state-macros :refer [defstatetype]])
             [monnit.pair #?@(:cljs [:refer [Pair]])])
   #?(:clj (:import [monnit.pair Pair])))
 

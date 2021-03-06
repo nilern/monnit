@@ -1,4 +1,4 @@
-(ns monnit.state-macros
+(ns monnit.impl.state-macros
   (:require [monnit.core :as m]))
 
 (defmacro defstatetype [name fields & impls]
