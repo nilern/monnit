@@ -6,27 +6,27 @@
   (either? [self])
   (left? [self])
   (right? [self])
-  (-fold [self lf rf]))
+  (-run-either [self lf rf]))
 
 (extend-protocol Either
   #?(:clj Object, :cljs default)
   (either? [_] false)
   (left? [_] false)
   (right? [_] false)
-  (-fold [self _ _] (assert false (str "fold called on non-Either value " self)))
+  (-run-either [self _ _] (assert false (str "fold called on non-Either value " self)))
 
   nil
   (either? [_] false)
   (left? [_] false)
   (right? [_] false)
-  (-fold [self _ _] (assert false (str "fold called on non-Either value " self))))
+  (-run-either [self _ _] (assert false (str "fold called on non-Either value " self))))
 
 (defrecord Left [value]
   Either
   (either? [_] true)
   (left? [_] true)
   (right? [_] false)
-  (-fold [_ lf _] (lf value))
+  (-run-either [_ lf _] (lf value))
 
   m/Functor
   (-fmap [self _] self)
@@ -48,7 +48,7 @@
   (either? [_] true)
   (left? [_] false)
   (right? [_] true)
-  (-fold [_ _ rf] (rf value))
+  (-run-either [_ _ rf] (rf value))
 
   m/Functor
   (-fmap [_ f] (Right. (f value)))
@@ -98,5 +98,5 @@
 
 (defmethod m/pure Either [_ v] (pure v))
 
-(defn fold [lf rf e] (-fold e lf rf))
+(defn run [lf rf e] (-run-either e lf rf))
 

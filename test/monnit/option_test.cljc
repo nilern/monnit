@@ -10,7 +10,7 @@
     (is (= true (o/option? mv)))
     (is (= true (o/none? mv)))
     (is (= false (o/some? mv)))
-    (is (= ::nope (o/fold ::nope unreachable mv)))
+    (is (= ::nope (o/run ::nope unreachable mv)))
 
     (doseq [n (range 1 10)
             li (range 0 n)]
@@ -21,14 +21,14 @@
           (is (= true (o/option? mv)))
           (is (= true (o/none? mv)))
           (is (= false (o/some? mv)))
-          (is (= ::nope (o/fold ::nope unreachable mv))))))
+          (is (= ::nope (o/run ::nope unreachable mv))))))
 
     (testing "bind"
       (let [mv (m/bind mv (comp o/pure inc))]
         (is (= true (o/option? mv)))
         (is (= true (o/none? mv)))
         (is (= false (o/some? mv)))
-        (is (= ::nope (o/fold ::nope unreachable mv)))))
+        (is (= ::nope (o/run ::nope unreachable mv)))))
 
     (testing "alt"
       (let [mv (m/alt mv (o/pure 5))]
@@ -39,7 +39,7 @@
     (is (= true (o/option? mv)))
     (is (= false (o/none? mv)))
     (is (= true (o/some? mv)))
-    (is (= 6 (o/fold nil inc mv)))
+    (is (= 6 (o/run nil inc mv)))
 
     (doseq [n (range 1 10)]
       (testing (str "fmap " n)
@@ -47,14 +47,14 @@
           (is (= true (o/option? mv)))
           (is (= false (o/none? mv)))
           (is (= true (o/some? mv)))
-          (is (= (inc (* n 5)) (o/fold nil inc mv))))))
+          (is (= (inc (* n 5)) (o/run nil inc mv))))))
 
     (testing "bind"
       (let [mv (m/bind mv (comp o/pure inc))]
         (is (= true (o/option? mv)))
         (is (= false (o/none? mv)))
         (is (= true (o/some? mv)))
-        (is (= 7 (o/fold nil inc mv)))))
+        (is (= 7 (o/run nil inc mv)))))
 
     (testing "alt"
       (let [mv (m/alt mv (o/pure 13))]
@@ -65,12 +65,12 @@
     (is (= true (o/option? mv)))
     (is (= false (o/none? mv)))
     (is (= true (o/some? mv)))
-    (is (= 6 (o/fold nil inc mv))))
+    (is (= 6 (o/run nil inc mv))))
 
   (testing "multimethod"
     (let [mv (o/pure 5)]
       (is (= true (o/option? mv)))
       (is (= false (o/none? mv)))
       (is (= true (o/some? mv)))
-      (is (= 6 (o/fold nil inc mv))))))
+      (is (= 6 (o/run nil inc mv))))))
 

@@ -10,7 +10,7 @@
     (is (= true (e/either? mv)))
     (is (= true (e/left? mv)))
     (is (= false (e/right? mv)))
-    (is (= :oh-noes (e/fold identity unreachable mv)))
+    (is (= :oh-noes (e/run identity unreachable mv)))
 
     (doseq [n (range 1 10)
             li (range 0 n)]
@@ -21,14 +21,14 @@
           (is (= true (e/either? mv)))
           (is (= true (e/left? mv)))
           (is (= false (e/right? mv)))
-          (is (= :oh-noes (e/fold identity unreachable mv))))))
+          (is (= :oh-noes (e/run identity unreachable mv))))))
 
     (testing "bind"
       (let [mv (m/bind mv (comp e/pure inc))]
         (is (= true (e/either? mv)))
         (is (= true (e/left? mv)))
         (is (= false (e/right? mv)))
-        (is (= :oh-noes (e/fold identity unreachable mv)))))
+        (is (= :oh-noes (e/run identity unreachable mv)))))
 
     (testing "alt"
       (let [mv (m/alt mv (e/pure 5))]
@@ -39,7 +39,7 @@
     (is (= true (e/either? mv)))
     (is (= false (e/left? mv)))
     (is (= true (e/right? mv)))
-    (is (= 6 (e/fold unreachable inc mv)))
+    (is (= 6 (e/run unreachable inc mv)))
 
     (doseq [n (range 1 10)]
       (testing (str "fmap " n)
@@ -47,14 +47,14 @@
           (is (= true (e/either? mv)))
           (is (= false (e/left? mv)))
           (is (= true (e/right? mv)))
-          (is (= (inc (* n 5)) (e/fold unreachable inc mv))))))
+          (is (= (inc (* n 5)) (e/run unreachable inc mv))))))
 
     (testing "bind"
       (let [mv (m/bind mv (comp e/pure inc))]
         (is (= true (e/either? mv)))
         (is (= false (e/left? mv)))
         (is (= true (e/right? mv)))
-        (is (= 7 (e/fold unreachable inc mv)))))
+        (is (= 7 (e/run unreachable inc mv)))))
 
     (testing "alt"
       (let [mv (m/alt mv (e/pure 13))]
@@ -65,12 +65,12 @@
     (is (= true (e/either? mv)))
     (is (= false (e/left? mv)))
     (is (= true (e/right? mv)))
-    (is (= 6 (e/fold unreachable inc mv))))
+    (is (= 6 (e/run unreachable inc mv))))
 
   (testing "multimethod"
     (let [mv (e/pure 5)]
       (is (= true (e/either? mv)))
       (is (= false (e/left? mv)))
       (is (= true (e/right? mv)))
-      (is (= 6 (e/fold unreachable inc mv))))))
+      (is (= 6 (e/run unreachable inc mv))))))
 

@@ -7,27 +7,27 @@
   (option? [self])
   (some? [self])
   (none? [self])
-  (-fold [self default f]))
+  (-run-option [self default f]))
 
 (extend-protocol Option
   #?(:clj Object, :cljs default)
   (option? [_] false)
   (none? [_] false)
   (some? [_] false)
-  (-fold [self _ _] (assert false (str "fold called on non-Option value " self)))
+  (-run-option [self _ _] (assert false (str "fold called on non-Option value " self)))
 
   nil
   (option? [_] false)
   (none? [_] false)
   (some? [_] false)
-  (-fold [self _ _] (assert false (str "fold called on non-Option value " self))))
+  (-run-option [self _ _] (assert false (str "fold called on non-Option value " self))))
 
 (defrecord None []
   Option
   (option? [_] true)
   (none? [_] true)
   (some? [_] false)
-  (-fold [_ default _] default)
+  (-run-option [_ default _] default)
 
   m/Functor
   (-fmap [self _] self)
@@ -49,7 +49,7 @@
   (option? [_] true)
   (none? [_] false)
   (some? [_] true)
-  (-fold [_ _ f] (f value))
+  (-run-option [_ _ f] (f value))
 
   m/Functor
   (-fmap [_ f] (Some. (f value)))
@@ -99,5 +99,5 @@
 
 (defmethod m/pure Option [_ v] (pure v))
 
-(defn fold [default f e] (-fold e default f))
+(defn run [default f e] (-run-option e default f))
 
