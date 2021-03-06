@@ -6,21 +6,21 @@
 
   <groupId>com.deepbeginnings</groupId>
   <artifactId>monnit</artifactId>
-  <version>0.1.0-alpha2</version>
+  <version>0.1.0-alpha3</version>
   <name>monnit</name>
   
   <scm>
     <url>https://github.com/nilern/monnit</url>
     <connection>scm:git:git://github.com/nilern/monnit.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/nilern/monnit.git</developerConnection>
-    <tag>0.1.0-alpha2</tag>
+    <tag>0.1.0-alpha3</tag>
   </scm>
 
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.1</version>
+      <version>1.10.3</version>
     </dependency>
   </dependencies>
 
