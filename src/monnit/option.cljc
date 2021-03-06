@@ -14,13 +14,15 @@
   (option? [_] false)
   (none? [_] false)
   (some? [_] false)
-  (-run-option [self _ _] (assert false (str "fold called on non-Option value " self)))
+  (-run-option [self _ _]
+    (assert false (str "-run-option called on non-Option value " self)))
 
   nil
   (option? [_] false)
   (none? [_] false)
   (some? [_] false)
-  (-run-option [self _ _] (assert false (str "fold called on non-Option value " self))))
+  (-run-option [self _ _]
+    (assert false (str "-run-option called on non-Option value " self))))
 
 (defrecord None []
   Option

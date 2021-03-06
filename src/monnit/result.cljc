@@ -13,13 +13,15 @@
   (result? [_] false)
   (err? [_] false)
   (ok? [_] false)
-  (-run-result [self _ _] (assert false (str "fold called on non-Result value " self)))
+  (-run-result [self _ _]
+    (assert false (str "-run-result called on non-Result value " self)))
 
   nil
   (result? [_] false)
   (err? [_] false)
   (ok? [_] false)
-  (-run-result [self _ _] (assert false (str "fold called on non-Result value " self))))
+  (-run-result [self _ _]
+    (assert false (str "-run-result called on non-Result value " self))))
 
 (defrecord Err [value]
   Result
