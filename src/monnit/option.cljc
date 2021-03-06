@@ -107,6 +107,11 @@
 
 (defmethod m/pure Option [_ v] (pure v))
 
+(defn nilable->option
+  "If `v` is `nil`, return [[none]]. Otherwise wrap `v` with [[some]]."
+  [v]
+  (if (nil? v) none (some v)))
+
 (defn run
   "Apply `f` to the contents of `self` if `(some? self)` and return `default` if `(none? self)`."
   [default f e]

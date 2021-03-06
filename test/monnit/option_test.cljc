@@ -74,3 +74,18 @@
       (is (= true (o/some? mv)))
       (is (= 6 (o/run nil inc mv))))))
 
+(deftest test-nilable->option
+  (let [mv (o/nilable->option 5)]
+    (is (= true (o/option? mv)))
+    (is (= false (o/none? mv)))
+    (is (= true (o/some? mv)))
+    (is (= 6 (o/run nil inc mv))))
+
+  (let [mv (o/nilable->option nil)]
+    (is (= true (o/option? mv)))
+    (is (= true (o/none? mv)))
+    (is (= false (o/some? mv)))
+    (is (= nil (o/run nil inc mv))))
+
+  (is (= true (o/some? (o/nilable->option false)))))
+
