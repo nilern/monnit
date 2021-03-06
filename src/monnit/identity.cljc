@@ -1,9 +1,15 @@
 (ns monnit.identity
+  "A pure computation that wraps a single value. Only useful because it
+  implements Functor and Monad."
   (:require [monnit.core :as m]))
 
 (defprotocol Identity
-  (identity? [self])
-  (run-identity [self]))
+  "A pure computation that wraps a single value. Only useful because it
+  implements [[m/Functor]] and [[m/Monad]]."
+  (identity? [self] "Is `self` an [[Identity]]?")
+  (run-identity [self]
+    "Extract the contained value. An implementation detail; call [[run]]
+    instead."))
 
 (extend-protocol Identity
   #?(:clj Object, :cljs default)
@@ -32,9 +38,9 @@
   m/Monad
   (bind [_ f] (f v)))
 
-(def pure ->Pure)
+(def ^{:arglists '([v])} pure "Wrap `v` in an [[Identity]]." ->Pure)
 
 (defmethod m/pure Identity [_ v] (pure v))
 
-(def run run-identity)
+(def ^{:arglists '([id])} run "Extract the value contained in `id`." run-identity)
 

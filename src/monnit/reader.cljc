@@ -1,12 +1,20 @@
 (ns monnit.reader
+  "A computation with an implicit context parameter. An alternative to noisy
+  explicit context parameters and the fragile thread locality of dynamically
+  bound Vars."
   (:refer-clojure :exclude [get])
   #?(:cljs (:require-macros [monnit.impl.reader-macros :refer [defreadertype]]))
   (:require [monnit.core :as m]
             #?(:clj [monnit.impl.reader-macros :refer [defreadertype]])))
 
 (defprotocol Reader
-  (reader? [self])
-  (-run-reader [self ctx]))
+  "A computation with an implicit context parameter. An alternative to noisy
+  explicit context parameters and the fragile thread locality of dynamically
+  bound Vars."
+  (reader? [self] "Is `self` a [[Reader]]?")
+  (-run-reader [self ctx]
+    "[[run]] with the [[Reader]] first. An implementation detail; call [[run]]
+    instead."))
 
 (extend-protocol Reader
   #?(:clj Object, :cljs default)
@@ -20,12 +28,14 @@
 
 (declare ->FMap1 ->FMap2 ->FMap3 ->FMap4 ->FMapN ->Bind)
 
-(defreadertype Get []
+(defreadertype ^{:doc "A [[Reader]] that gets the value of the context parameter."} Get []
   Reader
   (reader? [_] true)
   (-run-reader [_ ctx] ctx))
 
-(def get (Get.))
+(def get
+  "A [[Reader]] that gets the value of the context parameter. An instance of [[Get]]"
+  (Get.))
 
 (defreadertype FMap1 [f a]
   Reader
@@ -60,7 +70,7 @@
   (reader? [_] true)
   (-run-reader [_ ctx] (-run-reader (f (-run-reader a ctx)) ctx)))
 
-(deftype Pure [v]
+(deftype ^{:doc "A [[Reader]] that just contains a value and does not use the context parameter."} Pure [v]
   Reader
   (reader? [_] true)
   (-run-reader [_ _] v)
@@ -75,9 +85,12 @@
   m/Monad
   (bind [_ f] (f v)))
 
-(def pure ->Pure)
+(def ^{:arglists '([v])} pure "Wrap `v` in a [[Reader]]."->Pure)
 
 (defmethod m/pure Reader [_ v] (pure v))
 
-(defn run [ctx rm] (-run-reader rm ctx))
+(defn run
+  "Run the [[Reader]] computation `rm` with `ctx` as the context parameter value."
+  [ctx rm]
+  (-run-reader rm ctx))
 

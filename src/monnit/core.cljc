@@ -1,9 +1,14 @@
-(ns monnit.core)
+(ns monnit.core
+  "A library of Functors, Monads and other category theory abstractions.")
 
 (defprotocol Semigroup
-  (-sconcat [self b] [self b c] [self b c d] [self b c d args]))
+  "A type whose values can be combined with an associative binary operation."
+  (-sconcat [self b] [self b c] [self b c d] [self b c d args]
+    "Combine `self` with the other arguments, left to right. An implementation
+    detail, call [[sconcat]] instead."))
 
 (defn sconcat
+  "Combine the arguments with their [[Semigroup]] combination operation."
   ([a] a)
   ([a b] (-sconcat a b))
   ([a b c] (-sconcat a b c))
@@ -11,9 +16,15 @@
   ([a b c d & args] (-sconcat a b c d args)))
 
 (defprotocol Functor
-  (-fmap [a f] [a f b] [a f b c] [a f b c d] [a f b c d args]))
+  "A type whose 'contents' can be mapped with a function, producing a new value
+  of the same type."
+  (-fmap [a f] [a f b] [a f b c] [a f b c d] [a f b c d args]
+    "[[fmap]] with the first [[Functor]] value first. An implementation
+    detail, call [[fmap]] instead."))
 
 (defn fmap
+  "Map the function `f` over the [[Functor]]-implementing arguments, producing
+  a new value of the same [[Functor]] type."
   ([f a] (-fmap a f))
   ([f a b] (-fmap a f b))
   ([f a b c] (-fmap a f b c))
@@ -21,14 +32,24 @@
   ([f a b c d & args] (-fmap a f b c d args)))
 
 (defprotocol Monad
-  (bind [self f]))
+  "A type whose 'contents' can be mapped with a function to other values of the containing
+  type and then combined. When implementing this on a type, you should also implement
+  [[pure]] for that type."
+  (bind [self f]
+    "[[flat-map]], but with the [[Monad]] value first."))
 
-(defn flat-map [f mv] (bind mv f))
+(defn flat-map
+  "For a [[Monad]] `mv` (of type T<a>), call the function `f` (of type `a -> T<b>`)
+  on the contained values and combine the results back into on result (of type `T<b>`)."
+  [f mv]
+  (bind mv f))
 
-(defmulti pure (fn [type _] type))
+(defmulti pure "Wrap `v` into the [[Monad]] `type`." (fn [type v] type))
 
 (defprotocol Alternative
-  (alt [self other]))
+  "A generalization of `or`."
+  (alt [self other]
+    "Return `self` unless it is considered a failure; otherwise return `other`."))
 
 (extend-type #?(:clj clojure.lang.APersistentVector, :cljs PersistentVector)
   Semigroup

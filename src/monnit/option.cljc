@@ -1,13 +1,19 @@
 (ns monnit.option
+  "A computation that can fail to produce a meaningful result; a more robust
+  alternative to returning a value that may be `nil`."
   (:refer-clojure :exclude [some some?])
   (:require [monnit.core :as m]
             [monnit.impl.util :refer [typecase]]))
 
 (defprotocol Option
-  (option? [self])
-  (some? [self])
-  (none? [self])
-  (-run-option [self default f]))
+  "A computation that can fail to produce a meaningful result; a more robust
+  alternative to returning a value that may be `nil`."
+  (option? [self] "Is `self` an option ([[Some]] or [[None]])?")
+  (some? [self] "Is `self` a [[Some]]?")
+  (none? [self] "Is `self` a [[None]]?")
+  (-run-option [self default f]
+    "[[run]] with the [[Option]] first. An implementation detail; call [[run]]
+    instead."))
 
 (extend-protocol Option
   #?(:clj Object, :cljs default)
@@ -24,7 +30,7 @@
   (-run-option [self _ _]
     (assert false (str "-run-option called on non-Option value " self))))
 
-(defrecord None []
+(defrecord ^{:doc "An [[Option]] that contains no value."} None []
   Option
   (option? [_] true)
   (none? [_] true)
@@ -44,9 +50,9 @@
   m/Alternative
   (alt [_ other] other))
 
-(def none (None.))
+(def none "An instance of [[None]]." (None.))
 
-(defrecord Some [value]
+(defrecord ^{:doc "An [[Option]] that contains a value."} Some [value]
   Option
   (option? [_] true)
   (none? [_] false)
@@ -95,11 +101,14 @@
   m/Alternative
   (alt [self _] self))
 
-(def some ->Some)
+(def ^{:arglists '([v])} some "Wrap `v` into a [[Some]]." ->Some)
 
-(def pure some)
+(def ^{:arglists '([v])} pure "Wrap `v` into a [[Some]]." some)
 
 (defmethod m/pure Option [_ v] (pure v))
 
-(defn run [default f e] (-run-option e default f))
+(defn run
+  "Apply `f` to the contents of `self` if `(some? self)` and return `default` if `(none? self)`."
+  [default f e]
+  (-run-option e default f))
 

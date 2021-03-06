@@ -1,4 +1,6 @@
 (ns monnit.state
+  "A computation with an additional implicit state value that can be read and set.
+  Automates the threading through of immutable accumulator values etc."
   (:refer-clojure :exclude [get set update])
   #?(:cljs (:require-macros [monnit.impl.state-macros :refer [defstatetype]]))
   (:require [monnit.core :as m]
@@ -7,8 +9,12 @@
   #?(:clj (:import [monnit.pair Pair])))
 
 (defprotocol State
-  (state? [self])
-  (-run-state [self s]))
+  "A computation with an additional implicit state value that can be read and set.
+  Automates the threading through of immutable accumulator values etc."
+  (state? [self] "Is `self` a [[State]] computation?")
+  (-run-state [self s]
+    "[[run]] with the [[State]] first. An implementation detail; call [[run]]
+    instead."))
 
 (extend-protocol State
   #?(:clj Object, :cljs default)
@@ -79,7 +85,7 @@
     (let [^Pair sa (-run-state mv s)]
       (-run-state (f (.-snd sa)) (.-fst sa)))))
 
-(deftype Pure [v]
+(deftype ^{:doc "A [[State]] computation that just wraps a value."} Pure [v]
   State
   (state? [_] true)
   (-run-state [_ s] (Pair. s v))
@@ -94,30 +100,35 @@
   m/Monad
   (bind [_ f] (f v)))
 
-(def pure ->Pure)
+(def ^{:arglists '([v])} pure "Wrap `v` into a [[State]]." ->Pure)
 
 (defmethod m/pure State [_ v] (pure v))
 
-(defstatetype Get []
+(defstatetype ^{:doc "A [[State]] computation that gets the state."} Get []
   State
   (state? [_] true)
   (-run-state [_ s] (Pair. s s)))
 
-(def get (->Get))
+(def get "A [[State]] computation that gets the state. An instance of [[Get]]." (->Get))
 
-(defstatetype Set [s]
+(defstatetype ^{:doc "A [[State]] computation that sets the state."} Set [s]
   State
   (state? [_] true)
   (-run-state [_ _] (Pair. s nil)))
 
-(def set ->Set)
+(def ^{:arglists '([s*])} set "Make a [[State]] computation that sets the state to `s*`." ->Set)
 
-(defstatetype Update [f]
+(defstatetype ^{:doc "A [[State]] computation that updates the state with a function."} Update [f]
   State
   (state? [_] true)
   (-run-state [_ s] (let [s (f s)] (Pair. s s))))
 
-(def update ->Update)
+(def ^{:arglists '([f])} update "Make a [[State]] computation that updates the state with `f`." ->Update)
 
-(defn run [s sm] (-run-state sm s))
+(defn run
+  "Run a [[State]] computation `sm` with `s` as the initial value of the state.
+  Returns a [[monnit.pair.Pair]] with the final state as [[monnit.pair/fst]]
+  and the result value as [[monnit.pait/snd]]."
+  [s sm]
+  (-run-state sm s))
 
