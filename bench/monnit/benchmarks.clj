@@ -35,7 +35,7 @@
                         (m/mlet [l (label l)
                                  r (label r)]
                           (ms/pure [:branch l r])))))]
-    (mp/snd (ms/run 0 (label tree)))))
+    (ms/eval 0 (label tree))))
 
 (defn label-tree-algo [tree]
   (letfn [(label [tree]

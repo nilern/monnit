@@ -87,3 +87,9 @@
     (is (= true (s/state? mv)))
     (is (= (->Pair {} 5) (s/run {} mv)))))
 
+(deftest test-eval
+  (is (= 5 (s/eval {} (s/pure 5)))))
+
+(deftest test-exec
+  (is (= {} (s/exec {} (s/pure 5)))))
+

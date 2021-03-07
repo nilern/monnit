@@ -1,7 +1,7 @@
 (ns monnit.state
   "A computation with an additional implicit state value that can be read and set.
   Automates the threading through of immutable accumulator values etc."
-  (:refer-clojure :exclude [get set update])
+  (:refer-clojure :exclude [get set update eval])
   #?(:cljs (:require-macros [monnit.impl.state-macros :refer [defstatetype]]))
   (:require [monnit.core :as m]
             #?(:clj [monnit.impl.state-macros :refer [defstatetype]])
@@ -129,6 +129,16 @@
   "Run a [[State]] computation `sm` with `s` as the initial value of the state.
   Returns a [[monnit.pair.Pair]] with the final state as [[monnit.pair/fst]]
   and the result value as [[monnit.pait/snd]]."
-  [s sm]
+  ^Pair [s sm]
   (-run-state sm s))
+
+(defn eval
+  "Like [[run]], but discards the final state and returns only the result value."
+  [s sm]
+  (.-snd (run s sm)))
+
+(defn exec
+  "Like [[run]], but discards the result value and returns only the final state."
+  [s sm]
+  (.-fst (run s sm)))
 
