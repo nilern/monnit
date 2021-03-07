@@ -1,5 +1,6 @@
 (ns monnit.core
-  "A library of Functors, Monads and other category theory abstractions.")
+  "A library of Functors, Monads and other category theory abstractions."
+  #?(:cljs (:require-macros [monnit.core])))
 
 (defprotocol Semigroup
   "A type whose values can be combined with an associative binary operation."
@@ -50,6 +51,31 @@
   "A generalization of `or`."
   (alt [self other]
     "Return `self` unless it is considered a failure; otherwise return `other`."))
+
+#?(:clj
+  (defmacro mlet
+    "A convenience macro similar to `let`, `for` and Haskell `do`-notation:
+
+    `(mlet [a (foo 0)
+            b (bar a)
+            :let [c (+ a b)]]
+       (pure c))`
+    =>
+    `(bind (foo 0)
+           (fn [a] (bind (bar a)
+                         (fn [b] (let [c (+ a b)]
+                                   (pure c))))))`"
+    [bindings & body]
+    (assert (vector? bindings) "`bindings` is not a vector")
+    (assert (zero? (mod (count bindings) 2)) "odd number of `bindings`")
+    (->> bindings
+         (partition 2)
+         reverse
+         (reduce (fn [body [pat expr]]
+                   (case pat
+                     :let `(let ~expr ~body)
+                     `(bind ~expr (fn [~pat] ~body))))
+                 `(do ~@body)))))
 
 (extend-type #?(:clj clojure.lang.APersistentVector, :cljs PersistentVector)
   Semigroup

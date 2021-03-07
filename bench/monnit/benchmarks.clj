@@ -28,13 +28,13 @@
 (defn label-tree-monnit [tree]
   (letfn [(label [tree]
             (case (first tree)
-              :leaf (m/bind ms/get
-                            (fn [i] (m/bind (ms/set (inc i))
-                                            (fn [_] (ms/pure [:leaf i])))))
+              :leaf (m/mlet [i ms/get
+                             _ (ms/set (inc i))]
+                      (ms/pure [:leaf i]))
               :branch (let [[_ l r] tree]
-                        (m/bind (label l)
-                                (fn [l] (m/bind (label r)
-                                                (fn [r] (ms/pure [:branch l r]))))))))]
+                        (m/mlet [l (label l)
+                                 r (label r)]
+                          (ms/pure [:branch l r])))))]
     (mp/snd (ms/run 0 (label tree)))))
 
 (defn label-tree-algo [tree]
