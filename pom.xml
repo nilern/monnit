@@ -6,14 +6,14 @@
 
   <groupId>com.deepbeginnings</groupId>
   <artifactId>monnit</artifactId>
-  <version>0.1.0-alpha5</version>
+  <version>0.1.0-alpha6</version>
   <name>monnit</name>
   
   <scm>
     <url>https://github.com/nilern/monnit</url>
     <connection>scm:git:git://github.com/nilern/monnit.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/nilern/monnit.git</developerConnection>
-    <tag>0.1.0-alpha5</tag>
+    <tag>0.1.0-alpha6</tag>
   </scm>
 
   <dependencies>
