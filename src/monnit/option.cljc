@@ -1,13 +1,15 @@
 (ns monnit.option
   "A computation that can fail to produce a meaningful result; a more robust
-  alternative to returning a value that may be `nil`."
+  alternative to returning a value that may be `nil`. Implements [[monnit.core/Functor]],
+  [[monnit.core/Monad]] and [[monnit.core/Alternative]]."
   (:refer-clojure :exclude [some some?])
   (:require [monnit.core :as m]
             [monnit.impl.util :refer [typecase]]))
 
 (defprotocol Option
   "A computation that can fail to produce a meaningful result; a more robust
-  alternative to returning a value that may be `nil`."
+  alternative to returning a value that may be `nil`. Implements [[monnit.core/Functor]],
+  [[monnit.core/Monad]] and [[monnit.core/Alternative]]."
   (option? [self] "Is `self` an option ([[Some]] or [[None]])?")
   (some? [self] "Is `self` a [[Some]]?")
   (none? [self] "Is `self` a [[None]]?")

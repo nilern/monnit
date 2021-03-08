@@ -1,11 +1,11 @@
 (ns monnit.identity
   "A pure computation that wraps a single value. Only useful because it
-  implements Functor and Monad."
+  implements [[monnit.core/Functor]] and [[monnit.core/Monad]]."
   (:require [monnit.core :as m]))
 
 (defprotocol Identity
   "A pure computation that wraps a single value. Only useful because it
-  implements [[m/Functor]] and [[m/Monad]]."
+  implements [[monnit.core/Functor]] and [[monnit.core/Monad]]."
   (identity? [self] "Is `self` an [[Identity]]?")
   (run-identity [self]
     "Extract the contained value. An implementation detail; call [[run]]

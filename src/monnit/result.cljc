@@ -1,14 +1,16 @@
 (ns monnit.result
   "A computation that can fail with an error value; for when there is nothing
   exceptional about getting an error and the error should be handled sooner
-  rather than later (or never)."
+  rather than later (or never). Implements [[monnit.core/Functor]], [[monnit.core/Monad]]
+  and [[monnit.core/Alternative]]."
   (:require [monnit.core :as m]
             [monnit.impl.util :refer [typecase]]))
 
 (defprotocol Result
   "A computation that can fail with an error value; for when there is nothing
   exceptional about getting an error and the error should be handled sooner
-  rather than later (or never)."
+  rather than later (or never). Implements [[monnit.core/Functor]], [[monnit.core/Monad]]
+  and [[monnit.core/Alternative]]."
   (result? [self] "Is `self` a [[Result]]?")
   (err? [self] "Is `self` an [[Err]]?")
   (ok? [self] "Is `self` an [[Ok]]?")

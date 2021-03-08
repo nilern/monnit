@@ -1,10 +1,13 @@
 (ns monnit.pair
-  "A two-element tuple, smaller than a vector."
+  "A two-element tuple, smaller than a vector. Implements [[monnit.core/Functor]]."
   (:require [monnit.core :as m]))
 
 (declare ->Pair)
 
-(defrecord ^{:doc "A two-element tuple, smaller than a vector."} Pair [fst snd]
+(defrecord
+  ^{:doc "A two-element tuple, smaller than a vector. Implements [[monnit.core/Functor]]."}
+  Pair [fst snd]
+
   m/Functor
   (-fmap [_ f] (->Pair fst (f snd)))
   (-fmap [_ f b]

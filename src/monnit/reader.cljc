@@ -1,7 +1,7 @@
 (ns monnit.reader
   "A computation with an implicit context parameter. An alternative to noisy
   explicit context parameters and the fragile thread locality of dynamically
-  bound Vars."
+  bound Vars. Implements [[monnit.core/Functor]] and [[monnit.core/Monad]]."
   (:refer-clojure :exclude [get])
   #?(:cljs (:require-macros [monnit.impl.reader-macros :refer [defreadertype]]))
   (:require [monnit.core :as m]
@@ -10,7 +10,7 @@
 (defprotocol Reader
   "A computation with an implicit context parameter. An alternative to noisy
   explicit context parameters and the fragile thread locality of dynamically
-  bound Vars."
+  bound Vars. Implements [[monnit.core/Functor]] and [[monnit.core/Monad]]."
   (reader? [self] "Is `self` a [[Reader]]?")
   (-run-reader [self ctx]
     "[[run]] with the [[Reader]] first. An implementation detail; call [[run]]

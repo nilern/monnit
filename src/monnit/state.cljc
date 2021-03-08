@@ -1,6 +1,7 @@
 (ns monnit.state
   "A computation with an additional implicit state value that can be read and set.
-  Automates the threading through of immutable accumulator values etc."
+  Automates the threading through of immutable accumulator values etc.
+  Implements [[monnit.core/Functor]] and [[monnit.core/Monad]]."
   (:refer-clojure :exclude [get set update eval])
   #?(:cljs (:require-macros [monnit.impl.state-macros :refer [defstatetype]]))
   (:require [monnit.core :as m]
@@ -10,7 +11,8 @@
 
 (defprotocol State
   "A computation with an additional implicit state value that can be read and set.
-  Automates the threading through of immutable accumulator values etc."
+  Automates the threading through of immutable accumulator values etc.
+  Implements [[monnit.core/Functor]] and [[monnit.core/Monad]]."
   (state? [self] "Is `self` a [[State]] computation?")
   (-run-state [self s]
     "[[run]] with the [[State]] first. An implementation detail; call [[run]]
