@@ -4,7 +4,7 @@
 [![cljdoc badge](https://cljdoc.org/badge/com.deepbeginnings/monnit)](https://cljdoc.org/d/com.deepbeginnings/monnit/CURRENT)
 [![Build Status](https://img.shields.io/github/workflow/status/nilern/monnit/Run%20tests.svg)](https://github.com/nilern/monnit/actions)
 
-Monads, functors etc. for Clojure.
+Monads, functors etc. for Clojure(Script).
 
 ## Rationale (Why Yet Another Monads Library?)
 
@@ -12,7 +12,7 @@ I was writing various other libraries (yet to be released) and most of the time
 they ended up needing efficient Functor and Monad protocols. Having copies of
 those protocols in every library is clearly silly. I did not want the extra
 indirection and magic of Cats (currying because of Applicative Functors,
-MonadContexts in dynamic Vars, monads that just wrap fns) or the loose typing
+`MonadContext`s in dynamic Vars, monads that just wrap fns) or the loose typing
 of algo.monads (macros instead of protocols, the State monad is just a raw fn
 instead of having a dedicated type).
 
@@ -34,7 +34,7 @@ have a different focus (Fluokitten), be abandoned and to be honest, NIH.
 * [monnit.identity](https://cljdoc.org/d/com.deepbeginnings/monnit/CURRENT/api/monnit.identity)
   the trivial Functor and Monad; occasionally useful, just like the identity function
 * [monnit.pair](https://cljdoc.org/d/com.deepbeginnings/monnit/CURRENT/api/monnit.pair)
-  a two-element tuple for the State monad and general use; less indirection than a PersistentVector
+  a two-element tuple for the State monad and general use; less indirection than a `PersistentVector`
 
 ## Performance
 
@@ -45,7 +45,7 @@ intuitions:
 $ clj -A:bench
 Clojure 1.10.3
 
-> (require '[monnit.benchmarks :as b]reload)
+> (require '[monnit.benchmarks :as b])
 nil
 
 > (b/benchmark-labeling 10)
@@ -94,9 +94,10 @@ Evaluation count : 8580 in 60 samples of 143 calls.
 ```
 
 Here Monnit and algo.monads are about 7% faster than the vanilla Clojure
-version, probably because the latter uses PersistentVectors and destructuring.
-I was pleased to see that Monnit matches the performance of algo.monads while
-keeping the State monad type (types, actually) distinct like Cats.
+version, probably because the latter uses `PersistentVector`s and
+destructuring. I was pleased to see that Monnit matches the performance of
+algo.monads while keeping the State monad type (types, actually) distinct like
+Cats.
 
 The Cats State monad is about 17 times slower than the baseline, probably due
 to the indirections mentioned earlier. To be fair, the State monad does not
