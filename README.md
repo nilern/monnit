@@ -99,8 +99,8 @@ destructuring. I was pleased to see that Monnit matches the performance of
 algo.monads while keeping the State monad type (types, actually) distinct like
 Cats.
 
-The Cats State monad is about 17 times slower than the baseline, probably due
-to the indirections mentioned earlier. To be fair, the State monad does not
-seem to be much of a priority for Cats; it was even removed at some point, then
-re-added.
+In this benchmark the Cats State monad is about 17 times slower than the
+baseline, probably due to the indirections mentioned earlier. To be fair, the
+State monad does not seem to be much of a priority for Cats; it was even
+removed at some point, then re-added.
 
