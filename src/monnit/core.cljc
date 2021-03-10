@@ -47,7 +47,7 @@
 
 (defmulti ^{:arglists '([type v])} pure
   "Wrap `v` into the [[Monad]] `type`. If you know `type` statically as is usually the case,
-  prefer calling its `pure` (e.g. `monnit.state/pure`) directly."
+  prefer calling its `pure` (e.g. [[monnit.state/pure]]) directly."
   (fn [type v] type))
 
 (defprotocol Alternative
@@ -59,15 +59,17 @@
   (defmacro mlet
     "A convenience macro similar to `let`, `for` and Haskell `do`-notation:
 
-    ```(mlet [a (foo 0)
+    ```
+    (mlet [a (foo 0)
             b (bar a)
             :let [c (+ a b)]]
-       (monnit.state/pure c))```
+       (monnit.state/pure c))
     =>
-    ```(bind (foo 0)
+    (bind (foo 0)
            (fn [a] (bind (bar a)
                          (fn [b] (let [c (+ a b)]
-                                   (monnit.state/pure c))))))```"
+                                   (monnit.state/pure c))))))
+    ```"
     [bindings & body]
     (assert (vector? bindings) "`bindings` is not a vector")
     (assert (zero? (mod (count bindings) 2)) "odd number of `bindings`")
